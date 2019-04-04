@@ -87,3 +87,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+hw1/model_data/*
+hw1/expert_data/*
