@@ -89,4 +89,7 @@ ENV/
 .ropeproject
 
 hw1/model_data/*
+!hw1/model_data/PLACEHOLDER
+
 hw1/expert_data/*
+!hw1/expert_data/PLACEHOLDER
