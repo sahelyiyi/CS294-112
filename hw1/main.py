@@ -61,7 +61,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('envname', type=str)
     parser.add_argument('--dagger', action='store_true')
-    parser.add_argument('--num_rollouts', type=int, default=2,
+    parser.add_argument('--num_rollouts', type=int, default=20,
                         help='Number of expert roll outs in dagger mode')
 
     args = parser.parse_args()
