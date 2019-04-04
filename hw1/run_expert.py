@@ -64,8 +64,7 @@ def main():
             while not done:
                 true_action = policy_fn(obs[None, :])
                 if args.load_model:
-                    action = model.predict(obs)
-                    action.reshape(true_action.shape)
+                    action = model.predict(obs[None, :])
                 else:
                     action = true_action
                 observations.append(obs)
@@ -86,7 +85,8 @@ def main():
         print('std of return', np.std(returns))
 
         expert_data = {'observations': np.array(observations),
-                       'actions': np.array(true_actions)}
+                       'actions': np.array(true_actions),
+                       'returns': np.array(returns)}
 
         with open(os.path.join('expert_data', args.envname + '.pkl'), 'wb') as f:
             pickle.dump(expert_data, f, pickle.HIGHEST_PROTOCOL)
