@@ -31,7 +31,7 @@ def get_model_file_path(cfg, method_type, envname):
     return os.path.join(cfg.MODEL.NN.OUTPUT_DIR, '%s_%s' % (method_type, envname))
 
 
-def train_dagger(cfg, model, model_file_path, envname, X_train, y_train):
+def train_dagger(cfg, model, model_file_path, envname, X_train, y_train, num_rollouts):
     rewards_mean = []
     rewards_std = []
     for i in range(cfg.MODEL.NN.DAGGER_EPOCHES):
@@ -39,10 +39,11 @@ def train_dagger(cfg, model, model_file_path, envname, X_train, y_train):
         train(cfg, model, model_file_path, X_train, y_train)
 
         subprocess.call(
-            'python run_expert.py experts/%s.pkl %s --load_model %s' % (envname, envname, model_file_path),
+            'python run_expert.py experts/%s.pkl %s --num_rollouts %d --load_model %s' %
+            (envname, envname, num_rollouts, model_file_path),
             shell=True)
 
-        data = load_data(cfg, args.envname)
+        data = load_data(cfg, envname)
 
         returns = data['returns']
         rewards_mean.append(np.mean(returns))
@@ -60,6 +61,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('envname', type=str)
     parser.add_argument('--dagger', action='store_true')
+    parser.add_argument('--num_rollouts', type=int, default=2,
+                        help='Number of expert roll outs in dagger mode')
 
     args = parser.parse_args()
 
@@ -77,7 +80,7 @@ def main():
 
     if args.dagger:
         model_file_path = get_model_file_path(cfg, cfg.MODEL.NN.DAGGER_FILE_NAME, args.envname)
-        rewards_mean, rewards_std = train_dagger(cfg, model, model_file_path, args.envname, X_train, y_train)
+        rewards_mean, rewards_std = train_dagger(cfg, model, model_file_path, args.envname, X_train, y_train, args.num_rollouts)
         print('mean of rewards per iterations is', rewards_mean)
         print('std of rewards per iterations is', rewards_std)
 
